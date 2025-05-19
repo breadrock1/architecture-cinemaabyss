@@ -1,31 +1,48 @@
-FROM golang:1.23-alpine AS builder
+ARG FEATURES='--features default'
+
+FROM rust:1.85 AS chef
 
 WORKDIR /app
 
-# Copy go mod and sum files
-COPY go.mod ./
+RUN cargo install cargo-chef
 
-# Download all dependencies
-RUN go mod download
 
-# Copy the source code
+# Planner layer with cargo-chef cli tool and projects sources to create recipe.json
+FROM chef AS planner
+
+RUN apt update && apt install -y libssl-dev
+
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o events-service .
+RUN cargo chef prepare --recipe-path recipe.json
 
-# Use a smaller image for the final application
-FROM alpine:latest  
 
-RUN apk --no-cache add ca-certificates
+# Builder layer with build project binaries based on previous planner layer
+FROM chef AS builder
 
-WORKDIR /root/
+WORKDIR /app
 
-# Copy the binary from builder
-COPY --from=builder /app/events-service .
+COPY --from=planner /app/recipe.json recipe.json
 
-# Expose the application port
+RUN cargo chef cook --release --recipe-path recipe.json
+
+COPY . .
+
+RUN cargo install ${FEATURES} --bins --path .
+
+
+# Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt install -y openssl
+WORKDIR /app
+
+COPY ./config /app/config
+COPY --from=builder /app/target/release/events .
+
+# Execute to initliaze elasticsearch environment
+CMD ["/app/events"]
+
+ENTRYPOINT ["/app/events"]
+
 EXPOSE 8082
-
-# Command to run the executable
-CMD ["./events-service"]
