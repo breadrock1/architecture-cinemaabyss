@@ -540,13 +540,6 @@ pub async fn delete_payment(
     Ok(Json(Success::success()))
 }
 
-
-
-
-
-
-
-
 #[utoipa::path(
     post,
     path = "/api/subscriptions",
