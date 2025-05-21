@@ -40,9 +40,6 @@ WORKDIR /app
 COPY ./config /app/config
 COPY --from=builder /app/target/release/proxy .
 
-# Execute to initliaze elasticsearch environment
-CMD ["/app/proxy"]
-
 ENTRYPOINT ["/app/proxy"]
 
 EXPOSE 8000
