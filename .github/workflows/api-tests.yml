@@ -54,7 +54,6 @@ jobs:
       - name: Run API tests
         working-directory: tests/postman
         run: |
-
           docker compose up -d
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
