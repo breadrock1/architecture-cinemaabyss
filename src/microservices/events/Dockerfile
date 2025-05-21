@@ -28,7 +28,7 @@ RUN cargo chef cook --release --recipe-path recipe.json
 
 COPY . .
 
-RUN cargo install ${FEATURES} --bins --path .
+RUN cargo install .
 
 
 # Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
