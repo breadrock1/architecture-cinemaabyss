@@ -7,6 +7,18 @@ use utoipa::{IntoParams, ToSchema};
 use serde_json::json;
 use serde_json::Value;
 
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ServiceHealth {
+    #[schema(example = true)]
+    status: bool,
+}
+
+impl Default for ServiceHealth {
+    fn default() -> Self {
+        Self { status: true }
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "PascalCase")]
 pub enum EventType {

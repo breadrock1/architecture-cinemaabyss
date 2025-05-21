@@ -44,9 +44,9 @@ pub fn init_server(app: Arc<ServerApp>) -> Router {
         .route("/api/payments/{payment_id}", get(routes::get_payment).delete(routes::delete_payment))
         .route("/api/subscriptions", post(routes::create_subscription).get(routes::get_subscriptions))
         .route("/api/subscriptions/{subscription_id}", get(routes::get_subscription).delete(routes::delete_subscription))
-        .route("/api/events/health", get(routes::health_events))
-        .route("/api/events/movie", post(routes::create_movie_by_events))
-        .route("/api/events/user", post(routes::create_user_by_events))
-        .route("/api/events/payment", post(routes::create_payment_by_events))
+        // .route("/api/events/health", get(routes::health_events))
+        // .route("/api/events/movie", post(routes::create_movie_by_events))
+        // .route("/api/events/user", post(routes::create_user_by_events))
+        // .route("/api/events/payment", post(routes::create_payment_by_events))
         .with_state(app)
 }

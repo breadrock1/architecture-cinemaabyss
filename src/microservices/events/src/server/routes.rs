@@ -6,10 +6,10 @@ use std::sync::Arc;
 use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::ServerApp;
 use crate::server::swagger::SwaggerExamples;
-use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie, Payment, User, EventResponse, EventStatus};
+use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie, Payment, User, EventResponse, EventStatus, ServiceHealth};
 
 #[utoipa::path(
-    post,
+    get,
     path = "/api/events/health",
     tag = "health",
     responses(
@@ -35,7 +35,7 @@ use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie,
     )
 )]
 pub async fn health() -> ServerResult<impl IntoResponse> {
-    Ok(Json(Success::success()))
+    Ok(Json(ServiceHealth::default()))
 }
 
 #[utoipa::path(

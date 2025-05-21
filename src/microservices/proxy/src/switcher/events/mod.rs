@@ -1,6 +1,8 @@
+use serde_json::Value;
+
 use crate::switcher::helper;
 use crate::switcher::model::{CreateMovie, CreatePayment, CreateUser};
-use crate::switcher::model::{Movie, ServiceHealth, Payment, User};
+use crate::switcher::model::ServiceHealth;
 
 const EVENTS_URL: &str = "/api/events";
 
@@ -22,21 +24,21 @@ impl Events {
         Ok(status)
     }
 
-    pub async fn create_movie(&self, movie: CreateMovie) -> anyhow::Result<Movie> {
+    pub async fn create_movie(&self, movie: CreateMovie) -> anyhow::Result<Value> {
         let url = format!("{}{EVENTS_URL}/movie", self.url);
-        let movie = helper::send_post_request::<CreateMovie, Movie>(&url, movie).await?;
+        let movie = helper::send_post_request::<CreateMovie, Value>(&url, movie).await?;
         Ok(movie)
     }
 
-    pub async fn create_user(&self, user: CreateUser) -> anyhow::Result<User> {
+    pub async fn create_user(&self, user: CreateUser) -> anyhow::Result<Value> {
         let url = format!("{}{EVENTS_URL}/user", self.url);
-        let user = helper::send_post_request::<CreateUser, User>(&url, user).await?;
+        let user = helper::send_post_request::<CreateUser, Value>(&url, user).await?;
         Ok(user)
     }
 
-    pub async fn create_payment(&self, payment: CreatePayment) -> anyhow::Result<Payment> {
+    pub async fn create_payment(&self, payment: CreatePayment) -> anyhow::Result<Value> {
         let url = format!("{}{EVENTS_URL}/payment", self.url);
-        let payment = helper::send_post_request::<CreatePayment, Payment>(&url, payment).await?;
+        let payment = helper::send_post_request::<CreatePayment, Value>(&url, payment).await?;
         Ok(payment)
     }
 }
