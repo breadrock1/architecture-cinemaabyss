@@ -53,7 +53,7 @@ pub async fn health() -> ServerResult<impl IntoResponse> {
             status = 400,
             body = ServerError,
             content_type="application/json",
-            description = "Failed while creating movie",
+            description = "Movie service is not healthy",
             example = json!(ServerError::example(Some("internal error".to_string()))),
         ),
         (
@@ -68,8 +68,8 @@ pub async fn health_movie(
     State(state): State<Arc<ServerApp>>,
 ) -> ServerResult<impl IntoResponse> {
     let provider = state.provider.choose_cinema_provider(state.percent);
-    let movie = provider.health_movie().await?;
-    Ok(Json(movie))
+    let health = provider.health_movie().await?;
+    Ok(Json(health))
 }
 
 #[utoipa::path(
@@ -694,4 +694,152 @@ pub async fn delete_subscription(
     let provider = state.provider.choose_cinema_provider(state.percent);
     provider.delete_subscription(subscription_id).await?;
     Ok(Json(Success::success()))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/events/health",
+    tag = "events",
+    responses(
+        (
+            status = 200,
+            body = Success,
+            content_type="application/json",
+            description = "Events service is healthy",
+        ),
+        (
+            status = 400,
+            body = ServerError,
+            content_type="application/json",
+            description = "Events service is not healthy",
+            example = json!(ServerError::example(Some("internal error".to_string()))),
+        ),
+        (
+            status = 503,
+            body = ServerError,
+            description = "Server does not available",
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn health_events(
+    State(state): State<Arc<ServerApp>>,
+) -> ServerResult<impl IntoResponse> {
+    let provider = state.get_events();
+    let health = provider.health_events().await?;
+    Ok(Json(health))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/events/movies",
+    tag = "movies",
+    request_body(
+        content = CreateMovie,
+    ),
+    responses(
+        (
+            status = 200,
+            body = Movie,
+            content_type="application/json",
+            description = "Movie has been created by events",
+        ),
+        (
+            status = 400,
+            body = ServerError,
+            content_type="application/json",
+            description = "Failed while creating movie by events",
+            example = json!(ServerError::example(Some("internal error".to_string()))),
+        ),
+        (
+            status = 503,
+            body = ServerError,
+            description = "Server does not available",
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn create_movie_by_events(
+    State(state): State<Arc<ServerApp>>,
+    Json(form): Json<CreateMovie>,
+) -> ServerResult<impl IntoResponse> {
+    let provider = state.get_events();
+    let movie = provider.create_movie(form).await?;
+    Ok(Json(movie))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/events/users",
+    tag = "users",
+    request_body(
+        content = CreateUser,
+    ),
+    responses(
+        (
+            status = 200,
+            body = User,
+            content_type="application/json",
+            description = "User has been created by events",
+        ),
+        (
+            status = 400,
+            body = ServerError,
+            content_type="application/json",
+            description = "Failed while creating user by events",
+            example = json!(ServerError::example(Some("internal error".to_string()))),
+        ),
+        (
+            status = 503,
+            body = ServerError,
+            description = "Server does not available",
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn create_user_by_events(
+    State(state): State<Arc<ServerApp>>,
+    Json(form): Json<CreateUser>,
+) -> ServerResult<impl IntoResponse> {
+    let provider = state.get_events();
+    let user = provider.create_user(form).await?;
+    Ok(Json(user))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/events/payments",
+    tag = "payments",
+    request_body(
+        content = CreatePayment,
+    ),
+    responses(
+        (
+            status = 200,
+            body = Payment,
+            content_type="application/json",
+            description = "Payment has been created by events",
+        ),
+        (
+            status = 400,
+            body = ServerError,
+            content_type="application/json",
+            description = "Failed while creating payment by events",
+            example = json!(ServerError::example(Some("internal error".to_string()))),
+        ),
+        (
+            status = 503,
+            body = ServerError,
+            description = "Server does not available",
+            example = json!(ServerError::example(None)),
+        ),
+    )
+)]
+pub async fn create_payment_by_events(
+    State(state): State<Arc<ServerApp>>,
+    Json(form): Json<CreatePayment>,
+) -> ServerResult<impl IntoResponse> {
+    let provider = state.get_events();
+    let payment = provider.create_payment(form).await?;
+    Ok(Json(payment))
 }

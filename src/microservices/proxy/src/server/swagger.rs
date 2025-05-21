@@ -36,6 +36,10 @@ use crate::switcher::model::*;
         get_subscriptions,
         get_subscription,
         delete_subscription,
+        health_events,
+        create_movie_by_events,
+        create_user_by_events,
+        create_payment_by_events
     ),
     components(
         schemas(

@@ -14,8 +14,6 @@ pub type ServerResult<T> = Result<T, ServerError>;
 pub enum ServerError {
     #[error("internal service error: {0}")]
     InternalError(String),
-    #[error("reporter module error: {0}")]
-    Reporter(String),
     #[error("service unavailable")]
     ServiceUnavailable,
 }
@@ -30,7 +28,6 @@ impl ServerError {
     pub fn status_code(&self) -> (String, StatusCode) {
         match self {
             ServerError::InternalError(msg) => (msg.to_string(), StatusCode::INTERNAL_SERVER_ERROR),
-            ServerError::Reporter(err) => (err.to_string(), StatusCode::INTERNAL_SERVER_ERROR),
             ServerError::ServiceUnavailable => (
                 "service unavailable".to_string(),
                 StatusCode::SERVICE_UNAVAILABLE,

@@ -2,12 +2,13 @@ pub mod distributed;
 pub mod model;
 pub mod monolith;
 pub mod helper;
+pub mod events;
 
 use std::ops::Deref;
 use std::sync::Arc;
 
-use crate::config::ServiceConfig;
 use crate::switcher::distributed::Distributed;
+use crate::switcher::events::Events;
 use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser, MovieHealth};
 use crate::switcher::model::{Movie, Payment, Subscription, User};
 use crate::switcher::monolith::Monolith;
@@ -65,15 +66,19 @@ pub trait APIProvider: MovieProvider + UserProvider + PaymentProvider + Subscrip
 pub struct CinemaProvider {
     monolith: Arc<Monolith>,
     distributed: Arc<Distributed>,
-    config: ServiceConfig,
+    events: Arc<Events>,
 }
 
 impl CinemaProvider {
-    pub fn new(config: ServiceConfig, mono: Arc<Monolith>, distr: Arc<Distributed>) -> Self {
+    pub fn new(
+        mono: Arc<Monolith>,
+        distr: Arc<Distributed>,
+        events: Arc<Events>,
+    ) -> Self {
         CinemaProvider {
             monolith: mono,
             distributed: distr,
-            config: config.to_owned(),
+            events: events.to_owned(),
         }
     }
 
@@ -82,5 +87,9 @@ impl CinemaProvider {
             true => self.monolith.deref(),
             false => self.distributed.deref(),
         }
+    }
+
+    pub fn get_events(&self) -> Arc<Events> {
+        self.events.clone()
     }
 }

@@ -4,13 +4,14 @@ mod swagger;
 
 use axum::Router;
 
-use std::sync::Arc;
 use axum::routing::{get, post};
+use std::sync::Arc;
 use utoipa::OpenApi;
 use utoipa_rapidoc::RapiDoc;
 
 use crate::server::swagger::ApiDoc;
 use crate::switcher::CinemaProvider;
+use crate::switcher::events::Events;
 
 const OPENAPI_PATH: &str = "/api-docs/openapi.json";
 const OPENAPI_URL_PATH: &str = "/rapidoc";
@@ -23,6 +24,10 @@ pub struct ServerApp {
 impl ServerApp {
     pub fn new(percent: u32, provider: Arc<CinemaProvider>) -> Self {
         ServerApp { provider, percent }
+    }
+
+    pub fn get_events(&self) -> Arc<Events> {
+        self.provider.get_events()
     }
 }
 
@@ -39,5 +44,9 @@ pub fn init_server(app: Arc<ServerApp>) -> Router {
         .route("/api/payments/{payment_id}", get(routes::get_payment).delete(routes::delete_payment))
         .route("/api/subscriptions", post(routes::create_subscription).get(routes::get_subscriptions))
         .route("/api/subscriptions/{subscription_id}", get(routes::get_subscription).delete(routes::delete_subscription))
+        .route("/api/events/health", get(routes::health_events))
+        .route("/api/events/movie", post(routes::create_movie_by_events))
+        .route("/api/events/user", post(routes::create_user_by_events))
+        .route("/api/events/payment", post(routes::create_payment_by_events))
         .with_state(app)
 }
