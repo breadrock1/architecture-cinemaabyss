@@ -40,6 +40,6 @@ RUN apt-get update && apt install -y openssl
 #COPY ./config /app/config
 #COPY --from=builder /app/target/release/proxy .
 
-ENTRYPOINT ["/app/proxy"]
+ENTRYPOINT ["/app/target/release/proxy"]
 
 EXPOSE 8000
