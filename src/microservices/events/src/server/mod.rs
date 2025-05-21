@@ -111,7 +111,7 @@ pub fn init_server(app: Arc<ServerApp>) -> Router {
         .merge(RapiDoc::with_openapi(OPENAPI_PATH, ApiDoc::openapi()).path(OPENAPI_URL_PATH))
         .route("/api/events/health", get(routes::health))
         .route("/api/events/movie", post(routes::create_movie))
-        .route("/api/events/user", get(routes::create_user))
-        .route("/api/events/payment", get(routes::create_payment))
+        .route("/api/events/user", post(routes::create_user))
+        .route("/api/events/payment", post(routes::create_payment))
         .with_state(app)
 }

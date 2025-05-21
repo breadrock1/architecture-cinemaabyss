@@ -10,7 +10,7 @@ use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie,
 
 #[utoipa::path(
     post,
-    path = "/health",
+    path = "/api/events/health",
     tag = "health",
     responses(
         (
