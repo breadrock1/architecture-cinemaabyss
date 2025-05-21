@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN cargo install ${FEATURES} --bins --path .
+RUN cargo build --release --bin events
 
 
 # Target layer based on tiny official ubuntu image with neccessary binaries and data to run.

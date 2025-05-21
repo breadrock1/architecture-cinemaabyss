@@ -56,3 +56,8 @@ features = ["axum"]
 [dependencies.uuid]
 version = "1.15.0"
 features = ["v4", "serde"]
+
+[[bin]]
+name = "events"
+path = "src/bin/events.rs"
+
