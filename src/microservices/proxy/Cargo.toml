@@ -45,3 +45,7 @@ features = ["axum_extras", "chrono"]
 [dependencies.utoipa-rapidoc]
 version = "6.0.0"
 features = ["axum"]
+
+[[bin]]
+name = "proxy"
+path = "src/bin/proxy.rs"
