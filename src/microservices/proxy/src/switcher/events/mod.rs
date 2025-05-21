@@ -23,7 +23,7 @@ impl Events {
     }
 
     pub async fn create_movie(&self, movie: CreateMovie) -> anyhow::Result<Movie> {
-        let url = format!("{}{EVENTS_URL}/movies", self.url);
+        let url = format!("{}{EVENTS_URL}/movie", self.url);
         let movie = helper::send_post_request::<CreateMovie, Movie>(&url, movie).await?;
         Ok(movie)
     }
