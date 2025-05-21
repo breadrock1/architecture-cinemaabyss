@@ -8,19 +8,26 @@ anyhow = "^1.0"
 async-trait = "^0.1"
 config = "0.15.8"
 console-subscriber = "0.4.1"
-chrono = "0.4.40"
 derive_builder = "0.20.2"
 dotenv = "^0.15"
 getset = "0.1.4"
-kafka = "0.10.0"
 serde_json = "^1.0"
 thiserror = "2.0.11"
 tracing = "^0.1"
 tracing-subscriber = "^0.3"
+futures-util = "0.3.31"
 
 [dependencies.axum]
 version = "0.8.1"
 features = ["tracing", "tower-log"]
+
+[dependencies.chrono]
+version = "0.4.40"
+features = ["serde"]
+
+[dependencies.rdkafka]
+version = "0.37.0"
+features = ["tokio"]
 
 [dependencies.reqwest]
 version = "0.12.12"
@@ -45,3 +52,7 @@ features = ["axum_extras", "chrono"]
 [dependencies.utoipa-rapidoc]
 version = "6.0.0"
 features = ["axum"]
+
+[dependencies.uuid]
+version = "1.15.0"
+features = ["v4", "serde"]

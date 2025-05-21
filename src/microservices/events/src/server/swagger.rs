@@ -1,7 +1,7 @@
 use utoipa::OpenApi;
 
 use crate::server::routes::*;
-use crate::switcher::model::*;
+use crate::server::model::*;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -19,23 +19,10 @@ use crate::switcher::model::*;
         ),
     ),
     paths(
-        health_movie,
+        health,
         create_movie,
-        get_movies,
-        get_movie,
-        delete_movie,
         create_user,
-        get_users,
-        get_user,
-        delete_user,
         create_payment,
-        get_payments,
-        get_payment,
-        delete_payment,
-        create_subscription,
-        get_subscriptions,
-        get_subscription,
-        delete_subscription,
     ),
     components(
         schemas(

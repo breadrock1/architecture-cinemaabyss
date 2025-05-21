@@ -7,7 +7,7 @@ const DEV_FILE_CONFIG_PATH: &str = "./config/development.toml";
 const SERVICE_RUN_MODE: &str = "RUN_MODE";
 const SERVICE_PREFIX: &str = "";
 
-#[derive(Clone, Deserialize, Getters, CopyGetters)]
+#[derive(Clone, Debug, Deserialize, Getters, CopyGetters)]
 #[getset(get = "pub")]
 pub struct ServiceConfig {
     logger: String,
@@ -15,15 +15,7 @@ pub struct ServiceConfig {
     #[getset(skip)]
     #[getset(get_copy = "pub")]
     port: u16,
-    monolith_url: String,
-    movies_service_url: String,
-    events_service_url: String,
-    #[getset(skip)]
-    #[getset(get_copy = "pub")]
-    gradual_migration: bool,
-    #[getset(skip)]
-    #[getset(get_copy = "pub")]
-    movies_migration_percent: u32,
+    kafka_brokers: String,
 }
 
 impl ServiceConfig {

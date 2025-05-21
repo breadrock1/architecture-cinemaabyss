@@ -6,7 +6,7 @@ use std::sync::Arc;
 use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::ServerApp;
 use crate::server::swagger::SwaggerExamples;
-use crate::switcher::model::{CreateMovie, CreatePayment, CreateUser, Movie, Payment, User};
+use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie, Payment, User, EventResponse, EventStatus};
 
 #[utoipa::path(
     post,
@@ -68,11 +68,22 @@ pub async fn health() -> ServerResult<impl IntoResponse> {
     )
 )]
 pub async fn create_movie(
-    State(mut state): State<Arc<ServerApp>>,
+    State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreateMovie>,
 ) -> ServerResult<impl IntoResponse> {
-    state.publish("movie", form).await?;
-    Ok(Json(Success::success()))
+    let event = Event::try_from(form)?;
+    let bytes = serde_json::to_string(&event).unwrap();
+    state.publish("movie-events", bytes.as_bytes()).await?;
+
+    let response = EventResponse::builder()
+        .status(EventStatus::Success)
+        .partition("movie-partition".to_string())
+        .offset(1)
+        .event(event)
+        .build()
+        .unwrap();
+
+    Ok(Json(response))
 }
 
 #[utoipa::path(
@@ -105,11 +116,22 @@ pub async fn create_movie(
     )
 )]
 pub async fn create_user(
-    State(mut state): State<Arc<ServerApp>>,
+    State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreateUser>,
 ) -> ServerResult<impl IntoResponse> {
-    state.publish("users", form).await?;
-    Ok(Json(Success::success()))
+    let event = Event::try_from(form)?;
+    let bytes = serde_json::to_string(&event).unwrap();
+    state.publish("user-events", bytes.as_bytes()).await.unwrap();
+
+    let response = EventResponse::builder()
+        .status(EventStatus::Success)
+        .partition("user-partition".to_string())
+        .offset(1)
+        .event(event)
+        .build()
+        .unwrap();
+
+    Ok(Json(response))
 }
 
 #[utoipa::path(
@@ -142,9 +164,20 @@ pub async fn create_user(
     )
 )]
 pub async fn create_payment(
-    State(mut state): State<Arc<ServerApp>>,
+    State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreatePayment>,
 ) -> ServerResult<impl IntoResponse> {
-    state.publish("payments", form).await?;
-    Ok(Json(Success::success()))
+    let event = Event::try_from(form)?;
+    let bytes = serde_json::to_string(&event).unwrap();
+    state.publish("payment-events", bytes.as_bytes()).await.unwrap();
+
+    let response = EventResponse::builder()
+        .status(EventStatus::Success)
+        .partition("payment-partition".to_string())
+        .offset(1)
+        .event(event)
+        .build()
+        .unwrap();
+
+    Ok(Json(response))
 }
