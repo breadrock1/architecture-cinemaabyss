@@ -1,6 +1,6 @@
 use crate::switcher::helper;
 use crate::switcher::model::{CreateMovie, CreatePayment, CreateUser};
-use crate::switcher::model::{Movie, MovieHealth, Payment, User};
+use crate::switcher::model::{Movie, ServiceHealth, Payment, User};
 
 const EVENTS_URL: &str = "/api/events";
 
@@ -16,9 +16,9 @@ impl Events {
 }
 
 impl Events {
-    pub async fn health_events(&self) -> anyhow::Result<MovieHealth> {
+    pub async fn health_events(&self) -> anyhow::Result<ServiceHealth> {
         let url = format!("{}{EVENTS_URL}/health", self.url);
-        let status = helper::send_get_request::<MovieHealth>(&url).await?;
+        let status = helper::send_get_request::<ServiceHealth>(&url).await?;
         Ok(status)
     }
 

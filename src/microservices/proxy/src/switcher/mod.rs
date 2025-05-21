@@ -9,8 +9,8 @@ use std::sync::Arc;
 
 use crate::switcher::distributed::Distributed;
 use crate::switcher::events::Events;
-use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser, MovieHealth};
-use crate::switcher::model::{Movie, Payment, Subscription, User};
+use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser};
+use crate::switcher::model::{Movie, Payment, ServiceHealth, Subscription, User};
 use crate::switcher::monolith::Monolith;
 
 const HEALTH_URL: &str = "/health";
@@ -26,7 +26,7 @@ pub trait HealthProvider {
 
 #[async_trait::async_trait]
 pub trait MovieProvider {
-    async fn health_movie(&self) -> anyhow::Result<MovieHealth>;
+    async fn health_movie(&self) -> anyhow::Result<ServiceHealth>;
     async fn create_movie(&self, movie: CreateMovie) -> anyhow::Result<Movie>;
     async fn get_movies(&self) -> anyhow::Result<Vec<Movie>>;
     async fn get_movie(&self, movie_id: i32) -> anyhow::Result<Movie>;

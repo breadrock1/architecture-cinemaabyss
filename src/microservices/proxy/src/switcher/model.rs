@@ -6,7 +6,7 @@ use utoipa::{IntoParams, ToSchema};
 use serde_json::json;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct MovieHealth {
+pub struct ServiceHealth {
     #[schema(example = true)]
     status: bool,
 }

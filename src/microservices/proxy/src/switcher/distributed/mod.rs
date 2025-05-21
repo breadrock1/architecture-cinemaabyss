@@ -1,5 +1,5 @@
 use crate::config::ServiceConfig;
-use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser, Movie, MovieHealth, Payment, Subscription, User};
+use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser, Movie, ServiceHealth, Payment, Subscription, User};
 use crate::switcher::{helper, APIProvider, HealthProvider, MovieProvider, PaymentProvider, SubscriptionProvider, UserProvider};
 use crate::switcher::{MOVIES_URL, HEALTH_URL, PAYMENTS_URL, SUBSCRIPTIONS_URL, USERS_URL};
 
@@ -35,9 +35,9 @@ impl HealthProvider for Distributed {
 
 #[async_trait::async_trait]
 impl MovieProvider for Distributed {
-    async fn health_movie(&self) -> anyhow::Result<MovieHealth> {
+    async fn health_movie(&self) -> anyhow::Result<ServiceHealth> {
         let url = format!("{}/health", self.movie_url);
-        let status = helper::send_get_request::<MovieHealth>(&url).await?;
+        let status = helper::send_get_request::<ServiceHealth>(&url).await?;
         Ok(status)
     }
 
