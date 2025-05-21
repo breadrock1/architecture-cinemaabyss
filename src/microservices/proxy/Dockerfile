@@ -41,7 +41,7 @@ RUN apt-get update && apt install -y openssl
 #COPY --from=builder /app/target/release/proxy .
 
 COPY /app/target/debug/proxy /app/proxy
-COPY /app/target/release/proxy /app/proxy
+#COPY /app/target/release/proxy /app/proxy
 
 ENTRYPOINT ["/app/proxy"]
 

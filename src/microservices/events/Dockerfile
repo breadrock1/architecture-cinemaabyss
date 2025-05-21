@@ -42,7 +42,7 @@ RUN apt-get update && apt install -y openssl
 #COPY --from=builder /app/target/release/events .
 
 COPY /app/target/debug/events /app/events
-COPY /app/target/release/events /app/events
+#COPY /app/target/release/events /app/events
 
 ENTRYPOINT ["/app/events"]
 
