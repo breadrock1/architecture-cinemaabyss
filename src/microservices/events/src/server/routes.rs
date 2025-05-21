@@ -49,15 +49,12 @@ pub async fn health() -> ServerResult<impl IntoResponse> {
     ),
     responses(
         (
-            status = 200,
-            body = Movie,
-            content_type="application/json",
-            description = "Movie has been created",
+            status = 422,
+            description = "Unprocessable Entity",
         ),
         (
             status = 400,
             body = ServerError,
-            content_type="application/json",
             description = "Failed while creating movie",
             example = json!(ServerError::example(Some("internal error".to_string()))),
         ),
@@ -85,7 +82,7 @@ pub async fn create_movie(
         .build()
         .unwrap();
 
-    Ok((StatusCode::CREATED, Json(response)).into_response())
+    Ok((StatusCode::UNPROCESSABLE_ENTITY, Json(response)).into_response())
 }
 
 #[utoipa::path(
@@ -97,10 +94,8 @@ pub async fn create_movie(
     ),
     responses(
         (
-            status = 200,
-            body = User,
-            content_type="application/json",
-            description = "User has been created",
+            status = 422,
+            description = "Unprocessable Entity",
         ),
         (
             status = 400,
@@ -133,7 +128,7 @@ pub async fn create_user(
         .build()
         .unwrap();
 
-    Ok((StatusCode::CREATED, Json(response)).into_response())
+    Ok((StatusCode::UNPROCESSABLE_ENTITY, Json(response)).into_response())
 }
 
 #[utoipa::path(
@@ -145,7 +140,7 @@ pub async fn create_user(
     ),
     responses(
         (
-            status = 200,
+            status = 201,
             body = Payment,
             content_type="application/json",
             description = "Payment has been created",
