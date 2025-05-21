@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN cargo build --release --bin events
+RUN cargo build --release --bins
 
 
 # Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
@@ -17,9 +17,6 @@ WORKDIR /app
 
 COPY ./config /app/config
 COPY --from=builder /app/target/release/events .
-
-# Execute to initliaze elasticsearch environment
-CMD ["/app/events"]
 
 ENTRYPOINT ["/app/events"]
 
