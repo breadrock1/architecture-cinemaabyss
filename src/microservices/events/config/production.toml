@@ -1,4 +1,4 @@
-logger = "debug"
+logger = "info"
 
 address = "0.0.0.0"
 port = 8082

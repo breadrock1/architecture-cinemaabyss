@@ -4,8 +4,8 @@ use getset::{CopyGetters, Getters};
 use serde::Deserialize;
 
 const DEV_FILE_CONFIG_PATH: &str = "./config/development.toml";
-const SERVICE_RUN_MODE: &str = "RUN_MODE";
-const SERVICE_PREFIX: &str = "";
+const SERVICE_RUN_MODE: &str = "EVENTS_SERVICE__RUN_MODE";
+const SERVICE_PREFIX: &str = "EVENTS_SERVICE";
 
 #[derive(Clone, Debug, Deserialize, Getters, CopyGetters)]
 #[getset(get = "pub")]
@@ -30,7 +30,9 @@ impl ServiceConfig {
             .format(FileFormat::Toml)
             .required(false);
 
-        let env_config = Environment::with_prefix(SERVICE_PREFIX);
+        let env_config = Environment::with_prefix(SERVICE_PREFIX)
+            .separator("__")
+            .try_parsing(true);
 
         let settings = Config::builder()
             .add_source(dev_file_config)
