@@ -67,15 +67,6 @@ pub struct Success {
     message: String,
 }
 
-impl Success {
-    pub fn success() -> Success {
-        Success {
-            status: 200,
-            message: "Done".to_string(),
-        }
-    }
-}
-
 impl SwaggerExamples for Success {
     type Example = Self;
 

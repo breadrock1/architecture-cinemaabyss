@@ -7,24 +7,19 @@ use utoipa::{IntoParams, ToSchema};
 use serde_json::json;
 use serde_json::Value;
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct ServiceHealth {
-    #[schema(example = true)]
-    status: bool,
-}
-
-impl Default for ServiceHealth {
-    fn default() -> Self {
-        Self { status: true }
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "PascalCase")]
 pub enum EventType {
     Movie,
     User,
     Payment,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "PascalCase")]
+pub enum EventStatus {
+    Success,
+    Failed,
 }
 
 #[derive(Builder, Clone, Debug, Serialize, Deserialize, IntoParams, ToSchema)]
@@ -38,13 +33,6 @@ pub struct Event {
     timestamp: DateTime<Utc>,
     #[schema(example = "{}")]
     payload: Value,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
-#[serde(rename_all = "PascalCase")]
-pub enum EventStatus {
-    Success,
-    Failed,
 }
 
 #[derive(Builder, Clone, Debug, Serialize, Deserialize, IntoParams, ToSchema)]
@@ -65,6 +53,18 @@ impl EventResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct ServiceHealth {
+    #[schema(example = true)]
+    status: bool,
+}
+
+impl Default for ServiceHealth {
+    fn default() -> Self {
+        Self { status: true }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct Movie {
     #[schema(example = 1)]
     id: i32,
@@ -80,14 +80,19 @@ pub struct Movie {
 
 #[derive(Debug, Serialize, Deserialize, IntoParams, ToSchema)]
 pub struct CreateMovie {
-    #[schema(example = 9.0)]
-    rating: f64,
+    movie_id: i32,
     #[schema(example = "Star Wars: Here we go again")]
     title: String,
-    #[schema(example = "Star Wars movie")]
-    description: String,
+    #[schema(example = "added")]
+    action: String,
+    #[schema(example = 1)]
+    user_id: i32,
+    #[schema(example = 9.0)]
+    rating: f64,
     #[schema(example = json!(vec!["Action, Adventure, Fantasy"]))]
     genres: Option<Vec<String>>,
+    #[schema(example = "Star Wars movie")]
+    description: String,
 }
 
 impl TryFrom<CreateMovie> for Event {
@@ -118,6 +123,12 @@ pub struct User {
 
 #[derive(Debug, Serialize, Deserialize, IntoParams, ToSchema)]
 pub struct CreateUser {
+    #[schema(example = 1)]
+    user_id: i32,
+    #[schema(example = "added")]
+    action: String,
+    #[schema(example = "2025-01-15T14:30:00Z")]
+    timestamp: DateTime<Utc>,
     #[schema(example = "user")]
     username: String,
     #[schema(example = "user@email.net")]
@@ -155,9 +166,15 @@ pub struct Payment {
 #[derive(Debug, Serialize, Deserialize, IntoParams, ToSchema)]
 pub struct CreatePayment {
     #[schema(example = 1)]
+    payment_id: i32,
+    #[schema(example = 1)]
     user_id: i32,
     #[schema(example = 19.0)]
     amount: f32,
+    #[schema(example = "appended")]
+    status: String,
+    #[schema(example = "type")]
+    method_type: String,
     #[schema(example = "2025-01-15T14:30:00Z")]
     #[serde(default = "default_payment_timestamp")]
     timestamp: Option<String>,

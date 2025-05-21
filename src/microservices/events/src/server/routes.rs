@@ -4,9 +4,11 @@ use axum::response::IntoResponse;
 use std::sync::Arc;
 
 use crate::server::error::{ServerError, ServerResult, Success};
-use crate::server::ServerApp;
+use crate::server::model::{CreateMovie, CreatePayment, CreateUser};
+use crate::server::model::{Movie, Payment, User, ServiceHealth};
+use crate::server::model::{Event, EventResponse, EventStatus};
 use crate::server::swagger::SwaggerExamples;
-use crate::server::model::{Event, CreateMovie, CreatePayment, CreateUser, Movie, Payment, User, EventResponse, EventStatus, ServiceHealth};
+use crate::server::ServerApp;
 
 #[utoipa::path(
     get,
