@@ -35,6 +35,9 @@ jobs:
       
       - name: Start services with Docker Compose
         run: |
+          docker build -t proxy:latest ./src/microservices/proxy
+          docker build -t events:latest ./src/microservices/events
+          
           docker compose up -d
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
