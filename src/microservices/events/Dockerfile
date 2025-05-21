@@ -41,7 +41,9 @@ RUN apt-get update && apt install -y openssl
 #COPY ./config /app/config
 #COPY --from=builder /app/target/release/events .
 
-#ENTRYPOINT ["/app/events"]
-ENTRYPOINT ["/app/target/release/events"]
+COPY /app/target/debug/events /app/events
+COPY /app/target/release/events /app/events
+
+ENTRYPOINT ["/app/events"]
 
 EXPOSE 8000
