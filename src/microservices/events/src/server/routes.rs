@@ -1,8 +1,9 @@
-use axum::Json;
 use axum::extract::State;
-use axum::response::IntoResponse;
-use std::sync::Arc;
 use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::Json;
+use std::sync::Arc;
+
 use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::model::{CreateMovie, CreatePayment, CreateUser};
 use crate::server::model::{Movie, Payment, User, ServiceHealth};
@@ -49,12 +50,15 @@ pub async fn health() -> ServerResult<impl IntoResponse> {
     ),
     responses(
         (
-            status = 422,
-            description = "Unprocessable Entity",
+            status = 201,
+            body = Movie,
+            content_type="application/json",
+            description = "Movie has been created",
         ),
         (
             status = 400,
             body = ServerError,
+            content_type="application/json",
             description = "Failed while creating movie",
             example = json!(ServerError::example(Some("internal error".to_string()))),
         ),
@@ -82,7 +86,7 @@ pub async fn create_movie(
         .build()
         .unwrap();
 
-    Ok((StatusCode::UNPROCESSABLE_ENTITY, Json(response)).into_response())
+    Ok((StatusCode::CREATED, Json(response)).into_response())
 }
 
 #[utoipa::path(
@@ -94,8 +98,10 @@ pub async fn create_movie(
     ),
     responses(
         (
-            status = 422,
-            description = "Unprocessable Entity",
+            status = 201,
+            body = User,
+            content_type="application/json",
+            description = "User has been created",
         ),
         (
             status = 400,
@@ -128,7 +134,7 @@ pub async fn create_user(
         .build()
         .unwrap();
 
-    Ok((StatusCode::UNPROCESSABLE_ENTITY, Json(response)).into_response())
+    Ok((StatusCode::CREATED, Json(response)).into_response())
 }
 
 #[utoipa::path(
