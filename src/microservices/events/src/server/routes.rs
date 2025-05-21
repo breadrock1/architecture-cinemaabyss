@@ -6,8 +6,7 @@ use std::sync::Arc;
 
 use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::model::{CreateMovie, CreatePayment, CreateUser};
-use crate::server::model::{Movie, Payment, User, ServiceHealth};
-use crate::server::model::{Event, EventResponse, EventStatus};
+use crate::server::model::{Event, ServiceHealth};
 use crate::server::swagger::SwaggerExamples;
 use crate::server::ServerApp;
 
@@ -51,9 +50,9 @@ pub async fn health() -> ServerResult<impl IntoResponse> {
     responses(
         (
             status = 201,
-            body = Movie,
+            body = Success,
             content_type="application/json",
-            description = "Movie has been created",
+            description = "Success",
         ),
         (
             status = 400,
@@ -77,16 +76,7 @@ pub async fn create_movie(
     let event = Event::try_from(form)?;
     let bytes = serde_json::to_string(&event).unwrap();
     state.publish("movie-events", bytes.as_bytes()).await?;
-
-    let response = EventResponse::builder()
-        .status(EventStatus::Success)
-        .partition("movie-partition".to_string())
-        .offset(1)
-        .event(event)
-        .build()
-        .unwrap();
-
-    Ok((StatusCode::CREATED, Json(response)).into_response())
+    Ok((StatusCode::CREATED, Json(Success::success())).into_response())
 }
 
 #[utoipa::path(
@@ -99,9 +89,9 @@ pub async fn create_movie(
     responses(
         (
             status = 201,
-            body = User,
+            body = Success,
             content_type="application/json",
-            description = "User has been created",
+            description = "Success",
         ),
         (
             status = 400,
@@ -125,16 +115,7 @@ pub async fn create_user(
     let event = Event::try_from(form)?;
     let bytes = serde_json::to_string(&event).unwrap();
     state.publish("user-events", bytes.as_bytes()).await.unwrap();
-
-    let response = EventResponse::builder()
-        .status(EventStatus::Success)
-        .partition("user-partition".to_string())
-        .offset(1)
-        .event(event)
-        .build()
-        .unwrap();
-
-    Ok((StatusCode::CREATED, Json(response)).into_response())
+    Ok((StatusCode::CREATED, Json(Success::success())).into_response())
 }
 
 #[utoipa::path(
@@ -147,9 +128,9 @@ pub async fn create_user(
     responses(
         (
             status = 201,
-            body = Payment,
+            body = Success,
             content_type="application/json",
-            description = "Payment has been created",
+            description = "Success",
         ),
         (
             status = 400,
@@ -173,14 +154,5 @@ pub async fn create_payment(
     let event = Event::try_from(form)?;
     let bytes = serde_json::to_string(&event).unwrap();
     state.publish("payment-events", bytes.as_bytes()).await.unwrap();
-
-    let response = EventResponse::builder()
-        .status(EventStatus::Success)
-        .partition("payment-partition".to_string())
-        .offset(1)
-        .event(event)
-        .build()
-        .unwrap();
-
-    Ok((StatusCode::CREATED, Json(response)).into_response())
+    Ok((StatusCode::CREATED, Json(Success::success())).into_response())
 }

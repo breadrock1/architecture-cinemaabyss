@@ -63,8 +63,15 @@ impl SwaggerExamples for ServerError {
 
 #[derive(Serialize, ToSchema)]
 pub struct Success {
-    status: u16,
-    message: String,
+    status: String,
+}
+
+impl Success {
+    pub fn success() -> Success {
+        Success {
+            status: "success".to_owned(),
+        }
+    }
 }
 
 impl SwaggerExamples for Success {
@@ -72,8 +79,7 @@ impl SwaggerExamples for Success {
 
     fn example(value: Option<String>) -> Self::Example {
         Success {
-            status: 200,
-            message: value.unwrap_or("Ok".to_string()),
+            status: value.unwrap_or("success".to_owned()),
         }
     }
 }

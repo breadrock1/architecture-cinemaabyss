@@ -87,12 +87,6 @@ pub struct CreateMovie {
     action: String,
     #[schema(example = 1)]
     user_id: i32,
-    #[schema(example = 9.0)]
-    rating: f64,
-    #[schema(example = json!(vec!["Action, Adventure, Fantasy"]))]
-    genres: Option<Vec<String>>,
-    #[schema(example = "Star Wars movie")]
-    description: String,
 }
 
 impl TryFrom<CreateMovie> for Event {
@@ -131,8 +125,6 @@ pub struct CreateUser {
     timestamp: DateTime<Utc>,
     #[schema(example = "user")]
     username: String,
-    #[schema(example = "user@email.net")]
-    email: String,
 }
 
 impl TryFrom<CreateUser> for Event {
@@ -173,8 +165,6 @@ pub struct CreatePayment {
     amount: f32,
     #[schema(example = "appended")]
     status: String,
-    #[schema(example = "type")]
-    method_type: String,
     #[schema(example = "2025-01-15T14:30:00Z")]
     #[serde(default = "default_payment_timestamp")]
     timestamp: Option<String>,
