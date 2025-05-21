@@ -2,7 +2,7 @@ use axum::Json;
 use axum::extract::State;
 use axum::response::IntoResponse;
 use std::sync::Arc;
-
+use axum::http::StatusCode;
 use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::model::{CreateMovie, CreatePayment, CreateUser};
 use crate::server::model::{Movie, Payment, User, ServiceHealth};
@@ -85,7 +85,7 @@ pub async fn create_movie(
         .build()
         .unwrap();
 
-    Ok(Json(response))
+    Ok((StatusCode::CREATED, Json(response)).into_response())
 }
 
 #[utoipa::path(
@@ -133,7 +133,7 @@ pub async fn create_user(
         .build()
         .unwrap();
 
-    Ok(Json(response))
+    Ok((StatusCode::CREATED, Json(response)).into_response())
 }
 
 #[utoipa::path(
@@ -181,5 +181,5 @@ pub async fn create_payment(
         .build()
         .unwrap();
 
-    Ok(Json(response))
+    Ok((StatusCode::CREATED, Json(response)).into_response())
 }
