@@ -38,12 +38,16 @@ jobs:
           docker build -t proxy:latest ./src/microservices/proxy
           docker build -t events:latest ./src/microservices/events
           
-          docker compose up -d postgres zookeeper kafka
-          docker compose up -d monolith movies-service kafka-ui
-          docker compose up -d proxy-service events-service
           # Wait for services to be ready
+          docker compose up -d postgres zookeeper kafka
           echo "Waiting for services to be ready..."
           sleep 120
+          
+          docker compose up -d monolith movies-service
+          sleep 10
+          
+          docker compose up -d proxy-service events-service
+          sleep 10
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -60,7 +64,11 @@ jobs:
         working-directory: tests/postman
         run: |
           docker compose up -d postgres zookeeper kafka
-          docker compose up -d monolith movies-service kafka-ui
+          sleep 10
+          
+          docker compose up -d monolith movies-service
+          sleep 10
+          
           docker compose up -d proxy-service events-service
           
           # Wait for services to be ready
@@ -68,7 +76,9 @@ jobs:
           sleep 15
           
           docker logs cinemaabyss-proxy-service
+          sleep 3
           docker logs cinemaabyss-events-service
+          sleep 3
           
           # Build the Docker image
           docker build -t cinemaabyss-api-tests .
