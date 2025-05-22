@@ -5,6 +5,8 @@ RUN apt update && apt install -y libssl-dev, tree
 WORKDIR /app
 
 COPY . .
+RUN echo $(ls -1 /app)
+RUN echo $(ls -1 /app/src)
 RUN echo $(tree -L 3 /app)
 
 RUN cargo build --release

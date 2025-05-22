@@ -5,7 +5,9 @@ RUN apt update && apt install -y libssl-dev
 WORKDIR /app
 
 COPY . .
-RUN echo $(ls -la /app)
+RUN echo $(ls -1 /app)
+RUN echo $(ls -1 /app/src)
+RUN echo $(tree -L 3 /app)
 
 RUN cargo build --release
 RUN echo $(ls -la /app)
