@@ -1,14 +1,14 @@
 FROM rust:1.85 as builder
 
-RUN apt update && apt install -y libssl-dev
+RUN apt update && apt install -y libssl-dev, tree
 
 WORKDIR /app
 
 COPY . .
-RUN echo $(ls -la /app)
+RUN echo $(tree -L 3 /app)
 
 RUN cargo build --release
-RUN echo $(ls -la /app)
+RUN echo $(tree -L 3 /app)
 RUN echo $(ls -la /app/target)
 RUN echo $(ls -la /app/target/release)
 
