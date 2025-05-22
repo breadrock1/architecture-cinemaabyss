@@ -4,11 +4,13 @@ RUN apt update && apt install -y libssl-dev
 
 WORKDIR /app
 
-RUN echo $(ls -1 /app)
 COPY . .
-RUN echo $(ls -1 /app)
+RUN echo $(ls -la /app)
 
 RUN cargo build --release
+RUN echo $(ls -la /app)
+RUN echo $(ls -la /app/target)
+RUN echo $(ls -la /app/target/release)
 
 
 FROM debian:bookworm-slim
