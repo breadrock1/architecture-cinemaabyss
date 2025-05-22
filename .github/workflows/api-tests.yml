@@ -35,19 +35,20 @@ jobs:
       
       - name: Start services with Docker Compose
         run: |
-          docker build -t proxy:latest ./src/microservices/proxy
-          docker build -t events:latest ./src/microservices/events
+          docker compose up -d
           
           # Wait for services to be ready
-          docker compose up -d postgres zookeeper kafka
           echo "Waiting for services to be ready..."
           sleep 120
           
-          docker compose up -d monolith movies-service
+          docker compose restart monolith movies-service
           sleep 10
           
-          docker compose up -d proxy-service events-service
+          docker compose restart proxy-service events-service
           sleep 10
+          
+          docker compose logs cinemaabyss-proxy-service
+          docker compose logs cinemaabyss-events-service
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -63,21 +64,18 @@ jobs:
       - name: Run API tests
         working-directory: tests/postman
         run: |
-          docker compose up -d postgres zookeeper kafka
+          docker compose up -d
           sleep 10
           
-          docker compose up -d monolith movies-service
-          sleep 10
-          
-          docker compose up -d proxy-service events-service
+          docker compose restart monolith movies-service
+          docker compose restart proxy-service events-service
           
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
           sleep 15
           
-          docker logs cinemaabyss-proxy-service
-          sleep 3
-          docker logs cinemaabyss-events-service
+          docker compose logs cinemaabyss-proxy-service
+          docker compose logs cinemaabyss-events-service
           sleep 3
           
           # Build the Docker image
