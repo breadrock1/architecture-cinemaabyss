@@ -1,75 +1,45 @@
-FROM rust:1.85 as builder
+ARG FEATURES='--features default'
+
+FROM rust:1.85 AS chef
+
+WORKDIR /app
+
+RUN cargo install cargo-chef
+
+
+# Planner layer with cargo-chef cli tool and projects sources to create recipe.json
+FROM chef AS planner
 
 RUN apt update && apt install -y libssl-dev
 
+COPY . .
+
+RUN cargo chef prepare --recipe-path recipe.json
+
+
+# Builder layer with build project binaries based on previous planner layer
+FROM chef AS builder
+
 WORKDIR /app
 
+COPY --from=planner /app/recipe.json recipe.json
+
+RUN cargo chef cook --release --recipe-path recipe.json
+
 COPY . .
-RUN echo $(ls -1 /app)
-RUN echo $(ls -1 /app/src)
-RUN echo $(tree -L 3 /app)
 
 RUN cargo build --release
-RUN echo $(ls -la /app)
-RUN echo $(ls -la /app/target)
-RUN echo $(ls -la /app/target/release)
 
 
+# Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt install -y openssl
-
 WORKDIR /app
 
-COPY --from=builder /app/config /app/config
+COPY ./config /app/config
 COPY --from=builder /app/target/release/events .
 
 ENTRYPOINT ["/app/events"]
 
 EXPOSE 8082
-
-#ARG FEATURES='--features default'
-#
-#FROM rust:1.85 AS chef
-#
-#WORKDIR /app
-#
-#RUN cargo install cargo-chef
-#
-#
-## Planner layer with cargo-chef cli tool and projects sources to create recipe.json
-#FROM chef AS planner
-#
-#RUN apt update && apt install -y libssl-dev
-#
-#COPY . .
-#
-#RUN cargo chef prepare --recipe-path recipe.json
-#
-#
-## Builder layer with build project binaries based on previous planner layer
-#FROM chef AS builder
-#
-#WORKDIR /app
-#
-#COPY --from=planner /app/recipe.json recipe.json
-#
-#RUN cargo chef cook --release --recipe-path recipe.json
-#
-#COPY . .
-#
-#RUN cargo build --release
-#
-#
-## Target layer based on tiny official ubuntu image with neccessary binaries and data to run.
-#FROM debian:bookworm-slim
-#
-#RUN apt-get update && apt install -y openssl
-#WORKDIR /app
-#
-#COPY ./config /app/config
-#COPY --from=builder /app/target/release/events .
-#
-#ENTRYPOINT ["/app/events"]
-#
-#EXPOSE 8082
