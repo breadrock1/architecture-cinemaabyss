@@ -46,9 +46,6 @@ jobs:
           
           docker compose restart proxy-service events-service
           sleep 10
-          
-          docker compose logs cinemaabyss-proxy-service
-          docker compose logs cinemaabyss-events-service
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -73,10 +70,6 @@ jobs:
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
           sleep 15
-          
-          docker compose logs cinemaabyss-proxy-service
-          docker compose logs cinemaabyss-events-service
-          sleep 3
           
           # Build the Docker image
           docker build -t cinemaabyss-api-tests .
