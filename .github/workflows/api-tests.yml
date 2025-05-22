@@ -41,9 +41,7 @@ jobs:
           docker compose up -d
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
-          sleep 200
-          docker logs cinemaabyss-kafka
-          docker logs cinemaabyss-events-service
+          sleep 120
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -63,6 +61,8 @@ jobs:
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
           sleep 15
+          docker logs cinemaabyss-proxy-service
+          docker logs cinemaabyss-events-service
           # Build the Docker image
           docker build -t cinemaabyss-api-tests .
           
