@@ -119,6 +119,7 @@ jobs:
 
 #### Шаг 1
 Для деплоя в kubernetes необходимо залогиниться в docker registry Github'а.
+// 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
 1. Создайте Personal Access Token (PAT) https://github.com/settings/tokens . Создавайте class с правом read:packages
 2. В src/kubernetes/*.yaml (event-service, monolith, movies-service и proxy-service)  отредактируйте путь до ваших образов 
 ```bash
@@ -250,6 +251,8 @@ cat .docker/config.json | base64
   zookeeper-0                       1/1     Running 
 ```
 
+![k3s-get-pods.png](docs/k3s-get-pods.png)
+
   8. Добавим ingress
 
   - добавьте аддон
@@ -270,6 +273,8 @@ cat .docker/config.json | base64
   Вы должны увидеть вывод списка фильмов
   Можно поэкспериментировать со значением   MOVIES_MIGRATION_PERCENT в src/kubernetes/configmap.yaml и убедится, что вызовы movies уходят полностью в новый сервис
 
+![k3s-get-movies-ingress.png](docs/k3s-get-movies-ingress.png)
+
   12. Запустите тесты из папки tests/postman
   ```bash
    npm run test:kubernetes
@@ -277,9 +282,11 @@ cat .docker/config.json | base64
   Часть тестов с health-чек упадет, но создание событий отработает.
   Откройте логи event-service и сделайте скриншот обработки событий
 
+![k3s-events-postman-tests.png](docs/k3s-events-postman-tests.png)
+
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
-
+![step-3-screen.png](docs/step-3-screen.png)
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
