@@ -25,7 +25,45 @@ spec:
     spec:
       containers:
       - name: proxy-service
-        ..... тут
+        image: {{ .Values.proxyService.image.repository }}:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8000
+        env:
+          - name: PROXY_SERVICE__PORT
+            value: "8000"
+          - name: PROXY_SERVICE__MONOLITH_URL
+            value: "http://monolith:8080"
+          - name: PROXY_SERVICE__MOVIES_SERVICE_URL
+            value: "http://movies-service:8081"
+          - name: PROXY_SERVICE__EVENTS_SERVICE_URL
+            value: "http://events-service:8082"
+          - name: PROXY_SERVICE__GRADUAL_MIGRATION
+            value: "true"
+          - name: PROXY_SERVICE__MOVIES_MIGRATION_PERCENT
+            value: "50"
+        envFrom:
+          - configMapRef:
+              name: cinemaabyss-config
+          - secretRef:
+              name: cinemaabyss-secrets
+        resources:
+          {{- toYaml .Values.proxyService.resources | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerconfigjson
 ---
 apiVersion: v1
 kind: Service
@@ -38,5 +76,9 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   selector:
-    ... и тут
+    app: proxy-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP
 {{- end }}
