@@ -361,13 +361,30 @@ kubectl get pods -n cinemaabyss
 minikube tunnel
 ```
 
+Если используется не `minikube`:
+
+```bash
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx --create-namespace \
+    --set controller.service.type=NodePort
+
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx --create-namespace \
+    --set controller.service.type=LoadBalancer \
+    --set controller.service.externalTrafficPolicy=Local
+
+kubectl -n ingress-nginx get svc
+curl -X GET http://cinemaabyss.example.com/api/movies
+kubectl get svc -n ingress-nginx ingress-nginx-controller -w
+```
+
 ![k3s-helm-run-all.png](docs/k3s-helm-run-all.png)
 
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies и приложите скриншот
 
-
-
+![k3s-setup-nginx-ingress-service.png](docs/k3s-setup-nginx-ingress-service.png)
+![k3s-test-request-of helm-installing.png](docs/k3s-test-request-of%20helm-installing.png)
 
 ## Удаляем все
 
@@ -375,13 +392,3 @@ https://cinemaabyss.example.com/api/movies и приложите скриншо�
 kubectl delete all --all -n cinemaabyss
 kubectl delete namespace cinemaabyss
 ```
-
-
-kubectl -n cinemaabyss delete all --all 
-kubectl delete namespace cinemaabyss
-helm install cinemaabyss ./src/kubernetes/helm  --namespace cinemaabyss --create-namespace
-# kubectl get svc ingress-nginx-controller -n ingress-nginx
-kubectl -n cinemaabyss get svc ingress-nginx-controller -n ingress-nginx
-kubectl get nodes -o wide
-kubectl -n ingress-nginx get svc 
-curl -X GET http://cinemaabyss.example.com/api/movies
