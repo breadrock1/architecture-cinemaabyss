@@ -21,11 +21,24 @@ spec:
         app: proxy-service
     spec:
       containers:
-        - name: movies-service
+        - name: proxy-service
           image: ghcr.io/breadrock1/architecture-cinemaabyss/proxy-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
+          env:
+            - name: PROXY_SERVICE__PORT
+              value: "8000"
+            - name: PROXY_SERVICE__MONOLITH_URL
+              value: "http://monolith:8080"
+            - name: PROXY_SERVICE__MOVIES_SERVICE_URL
+              value: "http://movies-service:8081"
+            - name: PROXY_SERVICE__EVENTS_SERVICE_URL
+              value: "http://events-service:8082"
+            - name: PROXY_SERVICE__GRADUAL_MIGRATION
+              value: "true"
+            - name: PROXY_SERVICE__MOVIES_MIGRATION_PERCENT
+              value: "50"
           envFrom:
             - configMapRef:
                 name: cinemaabyss-config

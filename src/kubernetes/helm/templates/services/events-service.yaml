@@ -32,8 +32,6 @@ spec:
           env:
             - name: EVENTS_SERVICE__PORT
               value: "{{ .Values.eventsService.service.targetPort }}"
-            - name: EVENTS_SERVICE__KAFKA_BROKERS
-              value: kafka:9092
           envFrom:
             - configMapRef:
                 name: cinemaabyss-config
