@@ -24,43 +24,43 @@ spec:
         app: proxy-service
     spec:
       containers:
-      - name: proxy-service
-        image: {{ .Values.proxyService.image.repository }}:latest
-        imagePullPolicy: Always
-        ports:
-          - containerPort: 8000
-        env:
-          - name: PROXY_SERVICE__PORT
-            value: "8000"
-          - name: PROXY_SERVICE__MONOLITH_URL
-            value: "http://monolith:8080"
-          - name: PROXY_SERVICE__MOVIES_SERVICE_URL
-            value: "http://movies-service:8081"
-          - name: PROXY_SERVICE__EVENTS_SERVICE_URL
-            value: "http://events-service:8082"
-          - name: PROXY_SERVICE__GRADUAL_MIGRATION
-            value: "true"
-          - name: PROXY_SERVICE__MOVIES_MIGRATION_PERCENT
-            value: "50"
-        envFrom:
-          - configMapRef:
-              name: cinemaabyss-config
-          - secretRef:
-              name: cinemaabyss-secrets
-        resources:
+        - name: proxy-service
+          image: {{ .Values.proxyService.image.repository }}:{{ .Values.proxyService.image.tag }}
+          imagePullPolicy: {{ .Values.proxyService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.proxyService.service.targetPort }}
+          env:
+            - name: PROXY_SERVICE__PORT
+              value: "{{ .Values.proxyService.service.targetPort }}"
+            - name: PROXY_SERVICE__MONOLITH_URL
+              value: "http://monolith:8080"
+            - name: PROXY_SERVICE__MOVIES_SERVICE_URL
+              value: "http://movies-service:8081"
+            - name: PROXY_SERVICE__EVENTS_SERVICE_URL
+              value: "http://events-service:8082"
+            - name: PROXY_SERVICE__GRADUAL_MIGRATION
+              value: "{{ .Values.config.gradualMigration }}"
+            - name: PROXY_SERVICE__MOVIES_MIGRATION_PERCENT
+              value: "{{ .Values.config.moviesMigrationPercent }}"
+          envFrom:
+            - configMapRef:
+                name: cinemaabyss-config
+            - secretRef:
+                name: cinemaabyss-secrets
+          resources:
           {{- toYaml .Values.proxyService.resources | nindent 10 }}
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 15
-          periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.proxyService.service.targetPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.proxyService.service.targetPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
       restartPolicy: Always
       imagePullSecrets:
         - name: dockerconfigjson
@@ -78,7 +78,7 @@ spec:
   selector:
     app: proxy-service
   ports:
-  - port: 8000
-    targetPort: 8000
-  type: ClusterIP
+    - port: {{ .Values.proxyService.service.port }}
+      targetPort: {{ .Values.proxyService.service.targetPort }}
+  type: {{ .Values.proxyService.service.type }}
 {{- end }}

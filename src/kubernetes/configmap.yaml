@@ -13,7 +13,17 @@ data:
   # Service URLs
   MONOLITH_URL: "http://monolith:8080"
   MOVIES_SERVICE_URL: "http://movies-service:8081"
-  
+
+  EVENTS_SERVICE__PORT: "8082"
+  EVENTS_SERVICE__KAFKA_BROKERS: "kafka:9092"
+
+  PROXY_SERVICE__PORT: "8000"
+  PROXY_SERVICE__MONOLITH_URL: "http://monolith:8080"
+  PROXY_SERVICE__MOVIES_SERVICE_URL: "http://movies-service:8081"
+  PROXY_SERVICE__EVENTS_SERVICE_URL: "http://events-service:8082"
+  PROXY_SERVICE__GRADUAL_MIGRATION: "true"
+  PROXY_SERVICE__MOVIES_MIGRATION_PERCENT: "50"
+
   # Strangler Fig configuration
   GRADUAL_MIGRATION: "true"
   MOVIES_MIGRATION_PERCENT: "100"
