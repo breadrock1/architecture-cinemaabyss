@@ -83,7 +83,7 @@ impl CinemaProvider {
     }
 
     pub fn choose_cinema_provider(&self, percent: u32) -> &dyn APIProvider {
-        match rand::random::<u32>() >= percent {
+        match rand::random::<u32>() < percent {
             true => self.monolith.deref(),
             false => self.distributed.deref(),
         }
