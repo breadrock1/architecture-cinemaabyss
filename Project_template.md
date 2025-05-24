@@ -31,8 +31,7 @@
       - "8000:8000"
     environment:
       PORT: 8000
-      MONOLITH_URL: http://monolith:8080
-      #монолит
+      MONOLITH_URL: http://monolith:8080 #монолит
       MOVIES_SERVICE_URL: http://movies-service:8081 #сервис movies
       EVENTS_SERVICE_URL: http://events-service:8082 
       GRADUAL_MIGRATION: "true" # вкл/выкл простого фиче-флага
@@ -42,10 +41,18 @@
 ```
 
 - После реализации запустите postman тесты - они все должны быть зеленые (кроме events).
+
+Тут можно посмотреть логи тестов:
+[task-1-proxy-postman-tests.log](docs/task-1-proxy-postman-tests.log)
+
 - Отправьте запросы к API Gateway:
    ```bash
    curl http://localhost:8000/api/movies
    ```
+  
+Тут можно посмотреть результат запроса:
+[task-1-proxy-curl-output.log](docs/task-1-proxy-curl-output.log)
+
 - Протестируйте постепенный переход, изменив переменную окружения MOVIES_MIGRATION_PERCENT в файле docker-compose.yml.
 
 
