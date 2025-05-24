@@ -36,10 +36,17 @@ jobs:
       - name: Start services with Docker Compose
         run: |
           docker compose up -d
+          
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
           sleep 120
-      
+          
+          docker compose restart monolith movies-service
+          sleep 10
+          
+          docker compose restart proxy-service events-service
+          sleep 10
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -54,11 +61,16 @@ jobs:
       - name: Run API tests
         working-directory: tests/postman
         run: |
-
           docker compose up -d
+          sleep 10
+          
+          docker compose restart monolith movies-service
+          docker compose restart proxy-service events-service
+          
           # Wait for services to be ready
           echo "Waiting for services to be ready..."
           sleep 15
+          
           # Build the Docker image
           docker build -t cinemaabyss-api-tests .
           

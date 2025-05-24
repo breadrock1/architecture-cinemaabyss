@@ -1,0 +1,10 @@
+logger = "info"
+
+address = "0.0.0.0"
+port = 8000
+
+monolith_url = "http://monolith:8080"
+movies_service_url = "http://movies-service:8081"
+events_service_url = "http://events-service:8082"
+gradual_migration = "true"
+movies_migration_percent = 50

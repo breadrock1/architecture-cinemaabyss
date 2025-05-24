@@ -1,0 +1,48 @@
+@startuml containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title "Containers C4 diagram (To-Be) Cinema"
+
+Person(user, "Users", "User of cinema system")
+
+System_Boundary(system, "Cinema") {
+    Container_Boundary(users, "Users API") {
+        Container(users_api, "API", "Go", "Manages user accounts")
+        ContainerDb(users_db, "Database", "PostgreSQL", "Store users data")
+        Rel(users_api, users_db, "Read/Write", "SQL")
+    }
+
+    Container_Boundary(payments, "Payments API") {
+        Container(payments_api, "API", "Go", "Manages user payments")
+        ContainerDb(payments_db, "Database", "PostgreSQL", "Store user payments data")
+        Rel(payments_api, payments_db, "Read/Write", "SQL")
+    }
+
+    Container_Boundary(movies, "Movies API") {
+        Container(movies_api, "API", "Go", "Manage movies")
+        ContainerDb(movies_db, "Database", "PostgreSQL", "Store movies data")
+        Rel(movies_api, movies_db, "Read/Write", "SQL")
+    }
+
+    Container_Boundary(subscriptions, "Manage subscriptions") {
+        Container(subscriptions_api, "API", "Go", "Manage subscriptions API")
+        ContainerDb(subscriptions_db, "Database", "PostgreSQL", "Store subscriptions data")
+        Rel(subscriptions_api, subscriptions_db, "Read/Write", "SQL")
+    }
+
+    Container(web_app, "Web-UI", "React", "Web user interface")
+    Rel(user, web_app, "Interaction with system", "REST API")
+
+    Container(reverse_proxy, "Reverse Proxy", "Nginx", "Proxy requests to internal system API")
+    Rel(web_app, reverse_proxy, "Interaction with system", "REST API")
+    Rel(reverse_proxy, users_api, "Interaction with system", "REST API")
+    Rel(reverse_proxy, payments_api, "Interaction with system", "REST API")
+    Rel(reverse_proxy, movies_api, "Interaction with system", "REST API")
+    Rel(reverse_proxy, subscriptions, "Interaction with system", "REST API")
+}
+
+Container_Ext(recommends, "Recommendation system", $descr="System of recommendations")
+Rel(recommends, payments, "Load movies payments data", "REST API")
+Rel(recommends, movies, "Load movies data", "REST API")
+@enduml
