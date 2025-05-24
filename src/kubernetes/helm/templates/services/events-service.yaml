@@ -30,8 +30,6 @@ spec:
           ports:
             - containerPort: {{ .Values.eventsService.service.targetPort }}
           env:
-            - name: PORT
-              value: "{{ .Values.eventsService.service.targetPort }}"
             - name: EVENTS_SERVICE__PORT
               value: "{{ .Values.eventsService.service.targetPort }}"
           envFrom:
