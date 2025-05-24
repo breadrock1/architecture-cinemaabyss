@@ -12,6 +12,7 @@ use utoipa_rapidoc::RapiDoc;
 use crate::server::swagger::ApiDoc;
 use crate::switcher::CinemaProvider;
 use crate::switcher::events::Events;
+use crate::switcher::monolith::Monolith;
 
 const OPENAPI_PATH: &str = "/api-docs/openapi.json";
 const OPENAPI_URL_PATH: &str = "/rapidoc";
@@ -28,6 +29,10 @@ impl ServerApp {
 
     pub fn get_events(&self) -> Arc<Events> {
         self.provider.get_events()
+    }
+
+    pub fn get_monolith(&self) -> &Monolith {
+        self.provider.get_monolith()
     }
 }
 

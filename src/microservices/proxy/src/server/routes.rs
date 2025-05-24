@@ -7,6 +7,7 @@ use crate::server::error::{ServerError, ServerResult, Success};
 use crate::server::ServerApp;
 use crate::server::swagger::SwaggerExamples;
 use crate::switcher::model::{CreateMovie, CreatePayment, CreateSubscription, CreateUser, Movie, Payment, Subscription, User};
+use crate::switcher::{PaymentProvider, SubscriptionProvider, UserProvider};
 
 #[utoipa::path(
     post,
@@ -261,7 +262,7 @@ pub async fn create_user(
     State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreateUser>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let user = provider.create_user(form).await?;
     Ok(Json(user))
 }
@@ -295,7 +296,7 @@ pub async fn create_user(
 pub async fn get_users(
     State(state): State<Arc<ServerApp>>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let users = provider.get_users().await?;
     Ok(Json(users))
 }
@@ -337,7 +338,7 @@ pub async fn get_user(
     State(state): State<Arc<ServerApp>>,
     Path(user_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let user = provider.get_user(user_id).await?;
     Ok(Json(user))
 }
@@ -379,7 +380,7 @@ pub async fn delete_user(
     State(state): State<Arc<ServerApp>>,
     Path(user_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     provider.delete_user(user_id).await?;
     Ok(Json(Success::success()))
 }
@@ -417,7 +418,7 @@ pub async fn create_payment(
     State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreatePayment>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let payment = provider.create_payment(form).await?;
     Ok(Json(payment))
 }
@@ -451,7 +452,7 @@ pub async fn create_payment(
 pub async fn get_payments(
     State(state): State<Arc<ServerApp>>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let payments = provider.get_payments().await?;
     Ok(Json(payments))
 }
@@ -493,7 +494,7 @@ pub async fn get_payment(
     State(state): State<Arc<ServerApp>>,
     Path(payment_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let payment = provider.get_payment(payment_id).await?;
     Ok(Json(payment))
 }
@@ -535,7 +536,7 @@ pub async fn delete_payment(
     State(state): State<Arc<ServerApp>>,
     Path(payment_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     provider.delete_payment(payment_id).await?;
     Ok(Json(Success::success()))
 }
@@ -573,7 +574,7 @@ pub async fn create_subscription(
     State(state): State<Arc<ServerApp>>,
     Json(form): Json<CreateSubscription>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let subscription = provider.create_subscription(form).await?;
     Ok(Json(subscription))
 }
@@ -607,7 +608,7 @@ pub async fn create_subscription(
 pub async fn get_subscriptions(
     State(state): State<Arc<ServerApp>>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let subscriptions = provider.get_subscriptions().await?;
     Ok(Json(subscriptions))
 }
@@ -649,7 +650,7 @@ pub async fn get_subscription(
     State(state): State<Arc<ServerApp>>,
     Path(subscription_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     let subscription = provider.get_subscription(subscription_id).await?;
     Ok(Json(subscription))
 }
@@ -691,7 +692,7 @@ pub async fn delete_subscription(
     State(state): State<Arc<ServerApp>>,
     Path(subscription_id): Path<i32>,
 ) -> ServerResult<impl IntoResponse> {
-    let provider = state.provider.choose_cinema_provider(state.percent);
+    let provider = state.get_monolith();
     provider.delete_subscription(subscription_id).await?;
     Ok(Json(Success::success()))
 }

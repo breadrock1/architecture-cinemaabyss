@@ -89,6 +89,10 @@ impl CinemaProvider {
         }
     }
 
+    pub fn get_monolith(&self) -> &Monolith {
+        self.monolith.deref()
+    }
+
     pub fn get_events(&self) -> Arc<Events> {
         self.events.clone()
     }
