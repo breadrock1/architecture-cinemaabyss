@@ -166,6 +166,7 @@ ingress:
   className: nginx
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   hosts:
     - host: cinemaabyss.example.com
@@ -183,4 +184,4 @@ ingress:
 config:
   # Strangler Fig configuration
   gradualMigration: "true"
-  moviesMigrationPercent: "100"
+  moviesMigrationPercent: "50"
