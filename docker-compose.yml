@@ -122,7 +122,7 @@ services:
       PROXY_SERVICE__MOVIES_SERVICE_URL: http://movies-service:8081
       PROXY_SERVICE__EVENTS_SERVICE_URL: http://events-service:8082
       PROXY_SERVICE__GRADUAL_MIGRATION: "true"
-      PROXY_SERVICE__MOVIES_MIGRATION_PERCENT: "50"
+      PROXY_SERVICE__MOVIES_MIGRATION_PERCENT: "100"
     networks:
       - cinemaabyss-network
 
