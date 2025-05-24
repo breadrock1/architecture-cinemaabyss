@@ -118,8 +118,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
 ```
+
+Тут итоговые файлы с CI конфигурации:
+[api-tests.yml](.github/workflows/api-tests.yml)
+[docker-build-push.yml](.github/workflows/docker-build-push.yml)
+
 Как только сборка отработает и в github registry появятся ваши образы, можно переходить к блоку настройки Kubernetes
 Успешным результатом данного шага является "зеленая" сборка и "зеленые" тесты
+
+![all-ci-done-approve.png](docs/all-ci-done-approve.png)
 
 
 ### Proxy в Kubernetes
@@ -355,10 +362,16 @@ kubectl delete  namespace cinemaabyss
 ```bash
 helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
 ```
-Если в процессе будет ошибка
+Если в процессе будет ошибка, можно добавить к kafka service дополнительную переменную
 ```code
 [2025-04-08 21:43:38,780] ERROR Fatal error during KafkaServer startup. Prepare to shutdown (kafka.server.KafkaServer)
 kafka.common.InconsistentClusterIdException: The Cluster ID OkOjGPrdRimp8nkFohYkCw doesn't match stored clusterId Some(sbkcoiSiQV2h_mQpwy05zQ) in meta.properties. The broker is trying to join the wrong cluster. Configured zookeeper.connect may be wrong.
+```
+
+```yaml
+env:
+  - name: KAFKA_CLUSTER_ID
+    value: "sbkcoiSiQV2h_mQpwy05zQ"
 ```
 
 Проверьте развертывание:
