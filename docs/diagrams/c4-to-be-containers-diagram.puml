@@ -21,8 +21,8 @@ System_Boundary(system, "Cinema") {
 
     Container_Boundary(movies, "Movies API") {
         Container(movies_api, "API", "Go", "Manage movies")
-        ContainerDb(movies_db, "Database", "PostgreSQL", "Store movies data")
-        Rel(movies_api, movies_db, "Read/Write", "SQL")
+        ContainerDb(movies_storage, "Storage", "S3", "Store movies data")
+        Rel(movies_api, movies_storage, "Read/Write", "SQL")
     }
 
     Container_Boundary(subscriptions, "Manage subscriptions") {
@@ -34,8 +34,11 @@ System_Boundary(system, "Cinema") {
     Container(web_app, "Web-UI", "React", "Web user interface")
     Rel(user, web_app, "Interaction with system", "REST API")
 
+    Container(gateway, "API Gateway", "krakend", "API Gateway system")
+    Rel(web_app, gateway, "Interaction with system", "REST API")
+
     Container(reverse_proxy, "Reverse Proxy", "Nginx", "Proxy requests to internal system API")
-    Rel(web_app, reverse_proxy, "Interaction with system", "REST API")
+    Rel(gateway, reverse_proxy, "Interaction with internal system", "REST API")
     Rel(reverse_proxy, users_api, "Interaction with system", "REST API")
     Rel(reverse_proxy, payments_api, "Interaction with system", "REST API")
     Rel(reverse_proxy, movies_api, "Interaction with system", "REST API")
