@@ -5,12 +5,14 @@
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
 Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
+[docs/diagrams/c4-to-be-containers-diagram.puml](docs/diagrams/c4-to-be-containers-diagram.puml)
 
 # Задание 2
 
 ### 1. Proxy
-Команда КиноБездны уже выделила сервис метаданных о фильмах movies и вам необходимо реализовать бесшовный переход с применением паттерна Strangler Fig в части реализации прокси-сервиса (API Gateway), с помощью которого можно будет постепенно переключать траффик, используя фиче-флаг.
+Команда КиноБездны уже выделила сервис метаданных о фильмах movies и вам необходимо реализовать бесшовный переход с 
+применением паттерна Strangler Fig в части реализации прокси-сервиса (API Gateway), с помощью которого можно будет 
+постепенно переключать траффик, используя фиче-флаг.
 
 
 Реализуйте сервис на любом языке программирования в ./src/microservices/proxy.
@@ -29,8 +31,7 @@
       - "8000:8000"
     environment:
       PORT: 8000
-      MONOLITH_URL: http://monolith:8080
-      #монолит
+      MONOLITH_URL: http://monolith:8080 #монолит
       MOVIES_SERVICE_URL: http://movies-service:8081 #сервис movies
       EVENTS_SERVICE_URL: http://events-service:8082 
       GRADUAL_MIGRATION: "true" # вкл/выкл простого фиче-флага
@@ -40,10 +41,18 @@
 ```
 
 - После реализации запустите postman тесты - они все должны быть зеленые (кроме events).
+
+Тут можно посмотреть логи тестов:
+[task-1-proxy-postman-tests.log](docs/task-1-proxy-postman-tests.log)
+
 - Отправьте запросы к API Gateway:
    ```bash
    curl http://localhost:8000/api/movies
    ```
+  
+Тут можно посмотреть результат запроса:
+[task-1-proxy-curl-output.log](docs/task-1-proxy-curl-output.log)
+
 - Протестируйте постепенный переход, изменив переменную окружения MOVIES_MIGRATION_PERCENT в файле docker-compose.yml.
 
 
@@ -58,6 +67,9 @@
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka из UI http://localhost:8090 
+
+![postman-tests.png](docs/postman-tests.png)
+![kafka-topics-state.png](docs/kafka-topics-state.png)
 
 # Задание 3
 
@@ -106,8 +118,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
 ```
+
+Тут итоговые файлы с CI конфигурации:
+[api-tests.yml](.github/workflows/api-tests.yml)
+[docker-build-push.yml](.github/workflows/docker-build-push.yml)
+
 Как только сборка отработает и в github registry появятся ваши образы, можно переходить к блоку настройки Kubernetes
 Успешным результатом данного шага является "зеленая" сборка и "зеленые" тесты
+
+![all-ci-done-approve.png](docs/all-ci-done-approve.png)
 
 
 ### Proxy в Kubernetes
@@ -245,6 +264,8 @@ cat .docker/config.json | base64
   zookeeper-0                       1/1     Running 
 ```
 
+![k3s-get-pods.png](docs/k3s-get-pods.png)
+
   8. Добавим ingress
 
   - добавьте аддон
@@ -265,6 +286,8 @@ cat .docker/config.json | base64
   Вы должны увидеть вывод списка фильмов
   Можно поэкспериментировать со значением   MOVIES_MIGRATION_PERCENT в src/kubernetes/configmap.yaml и убедится, что вызовы movies уходят полностью в новый сервис
 
+![k3s-get-movies-ingress.png](docs/k3s-get-movies-ingress.png)
+
   12. Запустите тесты из папки tests/postman
   ```bash
    npm run test:kubernetes
@@ -272,9 +295,11 @@ cat .docker/config.json | base64
   Часть тестов с health-чек упадет, но создание событий отработает.
   Откройте логи event-service и сделайте скриншот обработки событий
 
+![k3s-events-postman-tests.png](docs/k3s-events-postman-tests.png)
+
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
-
+![step-3-screen.png](docs/step-3-screen.png)
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -330,14 +355,23 @@ template:
 kubectl delete all --all -n cinemaabyss
 kubectl delete  namespace cinemaabyss
 ```
+
+![k3s-delete-all.png](docs/k3s-delete-all.png)
+
 Запустите 
 ```bash
 helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
 ```
-Если в процессе будет ошибка
+Если в процессе будет ошибка, можно добавить к kafka service дополнительную переменную
 ```code
 [2025-04-08 21:43:38,780] ERROR Fatal error during KafkaServer startup. Prepare to shutdown (kafka.server.KafkaServer)
 kafka.common.InconsistentClusterIdException: The Cluster ID OkOjGPrdRimp8nkFohYkCw doesn't match stored clusterId Some(sbkcoiSiQV2h_mQpwy05zQ) in meta.properties. The broker is trying to join the wrong cluster. Configured zookeeper.connect may be wrong.
+```
+
+```yaml
+env:
+  - name: KAFKA_CLUSTER_ID
+    value: "sbkcoiSiQV2h_mQpwy05zQ"
 ```
 
 Проверьте развертывание:
@@ -346,9 +380,30 @@ kubectl get pods -n cinemaabyss
 minikube tunnel
 ```
 
+Если используется не `minikube`:
+
+```bash
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx --create-namespace \
+    --set controller.service.type=NodePort
+
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx --create-namespace \
+    --set controller.service.type=LoadBalancer \
+    --set controller.service.externalTrafficPolicy=Local
+
+kubectl -n ingress-nginx get svc
+curl -X GET http://cinemaabyss.example.com/api/movies
+kubectl get svc -n ingress-nginx ingress-nginx-controller -w
+```
+
+![k3s-helm-run-all.png](docs/k3s-helm-run-all.png)
+
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies и приложите скриншот
 
+![k3s-setup-nginx-ingress-service.png](docs/k3s-setup-nginx-ingress-service.png)
+![k3s-test-request-of helm-installing.png](docs/k3s-test-request-of%20helm-installing.png)
 
 ## Удаляем все
 
